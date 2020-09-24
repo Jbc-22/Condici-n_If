@@ -1,9 +1,11 @@
-package com.curso.conexionsocket.socket.app_descarga_fichero;
+package com.curso.conexionsocket.socket.app.descargaficheroweb;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.Socket;
+import java.nio.ByteBuffer;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
+import java.nio.channels.WritableByteChannel;
 import java.util.Scanner;
 
 public class Cliente {
@@ -15,22 +17,28 @@ public class Cliente {
         System.out.println("\nNúmero ----> ");
         int input = sc.nextInt();
 
-//        System.out.println("\nNombre que le desea dar al fichero\n----> ");
-//        int input1 = sc.nextInt();
-
         Socket ss = new Socket("localhost", 3333);
-        DataOutputStream dout = new DataOutputStream(ss.getOutputStream());
-        dout.writeInt(input);
+        DataOutputStream doutSalida = new DataOutputStream(ss.getOutputStream());
+        doutSalida.writeInt(input);
 
         System.out.println("Mensaje enviado\n ");
 
-        DataInputStream din = new DataInputStream(ss.getInputStream());
-        String respuesta = din.readUTF();
+        DataInputStream dinEntrada = new DataInputStream(ss.getInputStream());
+        FileOutputStream fileSalida = new FileOutputStream("film.mp4");
 
-        System.out.println("Respuesta del servidor: " + respuesta);
+        ReadableByteChannel readableByteChannel = Channels.newChannel(dinEntrada);
+        WritableByteChannel writableByteChannel = Channels.newChannel(fileSalida);
 
-        din.close();
-        dout.close();
+        ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
+
+        while (readableByteChannel.read(byteBuffer) > -1){
+            byteBuffer.flip();
+            writableByteChannel.write(byteBuffer);
+            byteBuffer.clear();
+        }
+
+        dinEntrada.close();
+        doutSalida.close();
         ss.close();
 
     }

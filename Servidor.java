@@ -1,4 +1,4 @@
-package com.curso.conexionsocket.socket.app_descarga_fichero;
+package com.curso.conexionsocket.socket.app.descargaficheroweb;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -18,11 +18,11 @@ public class Servidor {
 
             Socket s = ss.accept();
 
-            DataInputStream din = new DataInputStream(s.getInputStream());
-            DataOutputStream dos = new DataOutputStream(s.getOutputStream());
-            int opcion = din.readInt();
+            DataInputStream din_FlujoEntrada = new DataInputStream(s.getInputStream());
+            DataOutputStream dos_FlujoSalida = new DataOutputStream(s.getOutputStream());
+            int opcion = din_FlujoEntrada.readInt();
 
-            descargaFichero.downloadFile(dos, opcion);
+            descargaFichero.downloadFile(dos_FlujoSalida, opcion);
 
             System.out.println("Transferencia completada ");
 
